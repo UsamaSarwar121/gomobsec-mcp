@@ -126,6 +126,15 @@ pytest
 
 Try it with the MCP Inspector: `npx @modelcontextprotocol/inspector gomobsec-mcp`.
 
+### Releasing
+
+1. Bump the version in `src/gomobsec_mcp/__init__.py` **and** both `version` fields
+   in `server.json` (the tests and the release workflow check they match), and
+   add a `CHANGELOG.md` entry.
+2. Publish a GitHub release tagged `vX.Y.Z`. The `Publish` workflow tests and
+   builds it, uploads it to PyPI (Trusted Publishing), then lists it in the MCP
+   Registry (GitHub OIDC). No tokens are stored in the repository.
+
 ## License
 
 MIT
