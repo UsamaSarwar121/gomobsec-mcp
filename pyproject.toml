@@ -30,7 +30,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=8", "pytest-asyncio>=0.24"]
+# The hosted connector (gomobsec-mcp-hosted): Streamable HTTP + OAuth.
+hosted = ["uvicorn>=0.30,<1", "redis>=5,<8", "cryptography>=42"]
+test = ["pytest>=8", "pytest-asyncio>=0.24", "gomobsec-mcp[hosted]"]
 
 [project.urls]
 Homepage = "https://gomobsec.ai"
@@ -39,6 +41,7 @@ Issues = "https://github.com/UsamaSarwar121/gomobsec-mcp/issues"
 
 [project.scripts]
 gomobsec-mcp = "gomobsec_mcp.server:main"
+gomobsec-mcp-hosted = "gomobsec_mcp.hosted.app:main"
 
 [tool.hatch.version]
 path = "src/gomobsec_mcp/__init__.py"

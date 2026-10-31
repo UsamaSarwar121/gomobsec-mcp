@@ -42,14 +42,17 @@ def _detail(resp: httpx.Response) -> str | None:
     return None
 
 
-def _raise_for(resp: httpx.Response) -> None:
+# What a 401 means to the person reading it depends on where the key came from.
+LOCAL_KEY_HELP = ("GoMobSec did not accept the API key (wrong, revoked or expired). "
+                  "Create one in GoMobSec → API keys and set GOMOBSEC_API_KEY.")
+
+
+def _raise_for(resp: httpx.Response, key_help: str = LOCAL_KEY_HELP) -> None:
     code = resp.status_code
     if code < 400:
         return
     if code == 401:
-        raise GoMobSecError(
-            "GoMobSec did not accept the API key (wrong, revoked or expired). "
-            "Create one in GoMobSec → API keys and set GOMOBSEC_API_KEY.", 401)
+        raise GoMobSecError(key_help, 401)
     detail = _detail(resp)
     if code in (403, 404) and detail in (None, "Scan not found", "Access denied"):
         # One answer for both: confirming that someone else's scan exists is a leak.
@@ -76,15 +79,25 @@ class Report:
 
 class GoMobSecClient:
     def __init__(self, base_url: str, api_key: str | None, *, transport: httpx.AsyncBaseTransport | None = None,
-                 timeout: float = 30.0) -> None:
+                 timeout: float = 30.0, key_help: str = LOCAL_KEY_HELP,
+                 http: httpx.AsyncClient | None = None) -> None:
         self._api_key = api_key
-        self._http = httpx.AsyncClient(
+        self._key_help = key_help
+        self._http = http or httpx.AsyncClient(
             base_url=base_url,
             timeout=timeout,
             transport=transport,
             headers={"User-Agent": f"gomobsec-mcp/{__version__}"},
             follow_redirects=False,
         )
+
+    def with_key(self, api_key: str) -> GoMobSecClient:
+        """The same connection pool, calling as another account.
+
+        The hosted connector holds one key per connected user; every request
+        uses that user's key and nobody else's.
+        """
+        return GoMobSecClient("", api_key, key_help=self._key_help, http=self._http)
 
     async def aclose(self) -> None:
         await self._http.aclose()
@@ -104,7 +117,7 @@ class GoMobSecClient:
             raise GoMobSecError("GoMobSec did not answer in time — try again.") from exc
         except httpx.HTTPError as exc:
             raise GoMobSecError("Could not reach GoMobSec — check the network or GOMOBSEC_API_URL.") from exc
-        _raise_for(resp)
+        _raise_for(resp, self._key_help)
         return resp
 
     async def _json(self, method: str, path: str, **kwargs: Any) -> dict:

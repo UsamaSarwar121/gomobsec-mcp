@@ -26,6 +26,9 @@ class Settings:
     def report_url(self, scan_id: str) -> str:
         return f"{self.app_url}/scan/{scan_id}/results"
 
+    def upload_url(self) -> str:
+        return f"{self.app_url}/scan/new"
+
     @classmethod
     def from_env(cls) -> "Settings":
         key = os.environ.get("GOMOBSEC_API_KEY", "").strip() or None
