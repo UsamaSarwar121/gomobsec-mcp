@@ -84,7 +84,7 @@ def build_server(settings: Settings, client: GoMobSecClient | None = None) -> MC
         location and description, most severe first. Optionally filter by severity.
         False positives are left out unless include_false_positives is true."""
         sid = _sync(check_scan_id, scan_id)
-        findings = await call(api.get_findings(sid, severity, limit))
+        findings = await call(_most_severe_first(api, sid, severity, max(1, min(limit, 200)), include_false_positives))
         return render.findings_text(
             sid, findings, include_false_positives=include_false_positives, report_url=settings.report_url(sid),
         )
@@ -161,6 +161,30 @@ def build_server(settings: Settings, client: GoMobSecClient | None = None) -> MC
     return server
 
 
+async def _most_severe_first(api: GoMobSecClient, scan_id: str, severity: str | None, limit: int,
+                             include_false_positives: bool) -> list[dict]:
+    """Up to ``limit`` findings to show, CRITICAL first.
+
+    The API returns findings in no particular order and applies its limit
+    before any sorting, so a plain ``limit=10`` can miss the one critical
+    finding. Asking one severity at a time, most severe first, cannot.
+    Hidden false positives are kept in the list (render counts them) but do
+    not use up the limit.
+    """
+    rows: list[dict] = []
+    shown = 0
+    for sev in ([severity] if severity else render.SEVERITY_ORDER):
+        for f in await api.get_findings(scan_id, sev, 500):
+            if shown >= limit:
+                return rows
+            rows.append(f)
+            if include_false_positives or not f.get("false_positive"):
+                shown += 1
+        if shown >= limit:
+            break
+    return rows
+
+
 def _sync(fn, *args):
     """Call a local check, turning its refusal into a tool error the model sees."""
     try:
@@ -170,6 +194,10 @@ def _sync(fn, *args):
 
 
 def main() -> None:
+    import logging
+
+    # httpx logs every request at INFO; on stdio that is only noise in the client's server log.
+    logging.getLogger("httpx").setLevel(logging.WARNING)
     build_server(Settings.from_env()).run("stdio")
 
 
