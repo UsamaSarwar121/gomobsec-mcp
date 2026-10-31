@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 — unreleased
+## 0.2.0 — 2026-10-31
 
 - **Hosted connector.** `gomobsec-mcp-hosted` (`pip install "gomobsec-mcp[hosted]"`)
   serves the same tools over Streamable HTTP with OAuth 2.1, for Claude's custom
