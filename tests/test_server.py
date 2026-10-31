@@ -191,6 +191,29 @@ async def test_injected_finding_text_cannot_escape_the_data_block(settings, api)
     assert len(text) < 3000
 
 
+async def test_unfiltered_findings_put_criticals_first_even_past_the_limit(settings, api):
+    """The API is unordered and limits before sorting; the one CRITICAL must
+    still be in a small page (bug found testing 0.1.0 against a real scan)."""
+    sid = api.add_scan()
+    api.findings[sid] = (
+        [{"severity": "HIGH", "title": f"high {i}", "false_positive": False} for i in range(12)]
+        + [{"severity": "LOW", "title": "low", "false_positive": False}]
+        + [{"severity": "CRITICAL", "title": "the critical one", "false_positive": False}]
+    )
+    _, text = await call(make(settings, api), "get_findings", {"scan_id": sid, "limit": 5})
+    assert "1. [CRITICAL] the critical one" in text and "[LOW]" not in text
+    assert "**5 finding(s)" in text
+    assert [r.url.params.get("severity") for r in api.requests if "findings" in r.url.path] == ["CRITICAL", "HIGH"]
+
+
+async def test_hidden_false_positives_do_not_use_up_the_limit(settings, api):
+    sid = api.add_scan()
+    api.findings[sid] = [{"severity": "HIGH", "title": f"fp {i}", "false_positive": True} for i in range(3)] + [
+        {"severity": "MEDIUM", "title": "real one", "false_positive": False}]
+    _, text = await call(make(settings, api), "get_findings", {"scan_id": sid, "limit": 1})
+    assert "real one" in text and "3 false positives left out" in text
+
+
 async def test_severity_filter_is_validated(settings, api):
     sid = api.add_scan()
     is_error, _ = await call(make(settings, api), "get_findings", {"scan_id": sid, "severity": "SPICY"})
