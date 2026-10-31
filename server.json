@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.UsamaSarwar121/gomobsec-mcp",
+  "title": "GoMobSec",
+  "description": "Scan Android and iOS apps for security issues: findings, MASVS mapping and pentest reports.",
+  "websiteUrl": "https://gomobsec.ai",
+  "repository": {
+    "url": "https://github.com/UsamaSarwar121/gomobsec-mcp",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "gomobsec-mcp",
+      "version": "0.1.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "GOMOBSEC_API_KEY",
+          "description": "GoMobSec API key (GoMobSec → API keys; Professional and Enterprise plans)",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "GOMOBSEC_DOWNLOAD_DIR",
+          "description": "Folder reports are saved to",
+          "default": "~/Downloads/gomobsec"
+        }
+      ]
+    }
+  ]
+}

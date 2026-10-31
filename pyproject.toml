@@ -1,0 +1,52 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gomobsec-mcp"
+dynamic = ["version"]
+description = "Official GoMobSec MCP server: scan Android and iOS apps for security issues from your AI assistant."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "GoMobSec", email = "support@gomobsec.ai" }]
+keywords = ["mcp", "model-context-protocol", "mobile-security", "android", "ios", "apk", "ipa", "masvs", "sast", "pentest"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Security",
+]
+dependencies = [
+  "mcp>=2.3,<3",
+  "httpx>=0.27,<1",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8", "pytest-asyncio>=0.24"]
+
+[project.urls]
+Homepage = "https://gomobsec.ai"
+Repository = "https://github.com/UsamaSarwar121/gomobsec-mcp"
+Issues = "https://github.com/UsamaSarwar121/gomobsec-mcp/issues"
+
+[project.scripts]
+gomobsec-mcp = "gomobsec_mcp.server:main"
+
+[tool.hatch.version]
+path = "src/gomobsec_mcp/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gomobsec_mcp"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
