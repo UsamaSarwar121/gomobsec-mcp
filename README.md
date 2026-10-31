@@ -12,6 +12,16 @@ You: Scan ./build/app-release.apk and tell me what to fix first.
 AI:  start_scan → wait_for_scan → get_findings → a prioritised fix plan
 ```
 
+## Use it in Claude without installing anything
+
+GoMobSec also runs this server for you at **`https://mcp.gomobsec.ai/mcp`**. In
+Claude, go to **Settings → Connectors → Add custom connector**, enter that URL,
+and sign in with your GoMobSec account (Professional and Enterprise plans). Setup,
+tools, security and privacy are covered in [docs/HOSTED.md](docs/HOSTED.md).
+
+The rest of this page is about the **local** server, which reads apps straight
+from your disk and authenticates with an API key.
+
 ## Requirements
 
 - A GoMobSec account with an **API key**. Create one under **API keys** in GoMobSec.
@@ -116,6 +126,14 @@ the web app or CI. The scan modes and limits are the ones your plan allows.
 
 To report a vulnerability, see [SECURITY.md](SECURITY.md).
 
+## Privacy
+
+The local server keeps nothing. It reads your API key from the environment,
+sends requests only to GoMobSec, and writes only the reports you ask for. What
+GoMobSec does with the apps you scan is in the
+[GoMobSec privacy policy](https://gomobsec.ai/privacy). For the hosted connector,
+see [its privacy policy](https://gomobsec.ai/mcp/privacy).
+
 ## Development
 
 ```bash
@@ -125,6 +143,9 @@ pytest
 ```
 
 Try it with the MCP Inspector: `npx @modelcontextprotocol/inspector gomobsec-mcp`.
+
+The hosted connector's tests (`tests/test_hosted.py`) run a real HTTP server on a
+free port and go through the whole OAuth flow, with GoMobSec's side faked.
 
 ### Releasing
 
