@@ -50,6 +50,10 @@ async def test_tool_list_and_annotations(settings, api):
         prompts = [p.name for p in (await c.list_prompts()).prompts]
     assert set(tools) == {"whoami", "get_usage", "list_scans", "get_scan", "get_findings", "start_scan",
                           "wait_for_scan", "download_report"}
+    # Every tool carries a human-readable annotations.title (the Connectors
+    # Directory reads the display name from there, not the top-level title).
+    for name, tool in tools.items():
+        assert tool.annotations.title, name
     for name in ("whoami", "get_usage", "list_scans", "get_scan", "get_findings", "wait_for_scan"):
         assert tools[name].annotations.read_only_hint is True, name
     for name in ("start_scan", "download_report"):

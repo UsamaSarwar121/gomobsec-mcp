@@ -407,6 +407,7 @@ async def test_hosted_tool_catalogue(running):
                           "wait_for_scan", "get_upload_link", "get_report_link"}
     for name, tool in tools.items():
         assert tool.title, name
+        assert tool.annotations.title, name
         if name == "start_scan":
             assert tool.annotations.read_only_hint is False and tool.annotations.destructive_hint is False
         else:
