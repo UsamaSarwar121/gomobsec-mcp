@@ -105,8 +105,8 @@ class GoMobSecClient:
     def _headers(self) -> dict[str, str]:
         if not self._api_key:
             raise GoMobSecError(
-                "No API key configured. Create one in GoMobSec → API keys (Professional and Enterprise "
-                "plans) and set GOMOBSEC_API_KEY in this MCP server's environment.")
+                "No API key configured. Create one in GoMobSec → API keys (available on every paid "
+                "plan) and set GOMOBSEC_API_KEY in this MCP server's environment.")
         return {"X-API-Key": self._api_key}
 
     async def _request(self, method: str, path: str, **kwargs: Any) -> httpx.Response:

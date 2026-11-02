@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.1 — 2026-11-02
+
+- Registry manifest now advertises the hosted connector (`remotes`:
+  `https://mcp.gomobsec.ai/mcp`, Streamable HTTP), so the one-click connector is
+  discoverable in the MCP registry and the directories that mirror it — not just
+  the local pip package.
+- Plan copy corrected throughout: the hosted connector and API keys are available
+  on **every paid plan (Individual and up)**, not only Professional and Enterprise.
+
 ## 0.2.0 — 2026-10-31
 
 - **Hosted connector.** `gomobsec-mcp-hosted` (`pip install "gomobsec-mcp[hosted]"`)
@@ -7,7 +16,7 @@
   connectors and the Connectors Directory. It runs at `https://mcp.gomobsec.ai/mcp`
   ([docs/HOSTED.md](docs/HOSTED.md)). It supports Client ID Metadata Documents and
   Dynamic Client Registration, PKCE, resource-bound rotating tokens, and sign-in
-  through GoMobSec's consent page. It is available on Professional and Enterprise plans.
+  through GoMobSec's consent page. It is available on every paid plan (Individual and up).
 - Hosted tools that can't touch the user's disk: `start_scan` takes an https
   `file_url` (fetched only from public addresses), and `get_upload_link` and
   `get_report_link` link to the web app. `wait_for_scan` waits up to 4 minutes per call.
