@@ -43,7 +43,7 @@ logger = logging.getLogger("gomobsec_mcp.hosted")
 HOSTED_KEY_HELP = ("GoMobSec no longer accepts this connection — it was disconnected in GoMobSec → API keys. "
                    "Reconnect GoMobSec in your AI app's connector settings.")
 # Plans that include API access (the platform's `api_access` feature).
-API_PLANS = frozenset({"professional", "enterprise"})
+API_PLANS = frozenset({"individual", "starter", "professional", "enterprise"})
 PLAN_CACHE_SECONDS = 300
 _COOKIE_PREFIX = "gmcp_"
 
@@ -88,7 +88,7 @@ class HostedAccess:
             self._plans[grant_id] = cached
         if cached[1] is not None:
             raise GoMobSecError(
-                "GoMobSec for AI assistants is part of the Professional and Enterprise plans; this account "
+                "GoMobSec for AI assistants is available on every paid plan (Individual and up); this account "
                 f"is on the {cached[1]} plan. Upgrade at {self._app_url}/pricing and try again.", 403)
 
     async def rejected(self) -> None:

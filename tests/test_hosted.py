@@ -383,9 +383,9 @@ async def test_nothing_secret_is_stored_in_the_clear(running):
 # ── plans and revoked keys ───────────────────────────────────────────────────
 async def test_plan_without_api_access_gets_an_upgrade_message(running):
     tokens = await _connect(running)
-    running.api.tier = "starter"
+    running.api.tier = "free"
     is_error, text = await _call(running, tokens["access_token"], "list_scans")
-    assert is_error and "Professional and Enterprise" in text and "starter" in text and "/pricing" in text
+    assert is_error and "every paid plan" in text and "free" in text and "/pricing" in text
 
 
 async def test_key_revoked_in_gomobsec_disconnects(running):
@@ -407,6 +407,7 @@ async def test_hosted_tool_catalogue(running):
                           "wait_for_scan", "get_upload_link", "get_report_link"}
     for name, tool in tools.items():
         assert tool.title, name
+        assert tool.annotations.title, name
         if name == "start_scan":
             assert tool.annotations.read_only_hint is False and tool.annotations.destructive_hint is False
         else:

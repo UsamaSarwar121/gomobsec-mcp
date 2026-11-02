@@ -16,7 +16,7 @@ AI:  start_scan → wait_for_scan → get_findings → a prioritised fix plan
 
 GoMobSec also runs this server for you at **`https://mcp.gomobsec.ai/mcp`**. In
 Claude, go to **Settings → Connectors → Add custom connector**, enter that URL,
-and sign in with your GoMobSec account (Professional and Enterprise plans). Setup,
+and sign in with your GoMobSec account (available on every paid plan). Setup,
 tools, security and privacy are covered in [docs/HOSTED.md](docs/HOSTED.md).
 
 The rest of this page is about the **local** server, which reads apps straight
@@ -25,7 +25,7 @@ from your disk and authenticates with an API key.
 ## Requirements
 
 - A GoMobSec account with an **API key**. Create one under **API keys** in GoMobSec.
-  API keys come with the Professional and Enterprise plans.
+  API keys come with every paid plan (Individual and up).
 - [`uv`](https://docs.astral.sh/uv/) (recommended) or Python 3.10+.
 
 ## Install

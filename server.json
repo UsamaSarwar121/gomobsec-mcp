@@ -8,13 +8,19 @@
     "url": "https://github.com/UsamaSarwar121/gomobsec-mcp",
     "source": "github"
   },
-  "version": "0.2.0",
+  "version": "0.2.1",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.gomobsec.ai/mcp"
+    }
+  ],
   "packages": [
     {
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "gomobsec-mcp",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"
@@ -22,7 +28,7 @@
       "environmentVariables": [
         {
           "name": "GOMOBSEC_API_KEY",
-          "description": "GoMobSec API key (GoMobSec → API keys; Professional and Enterprise plans)",
+          "description": "GoMobSec API key (GoMobSec → API keys; available on every paid plan)",
           "isRequired": true,
           "isSecret": true
         },
