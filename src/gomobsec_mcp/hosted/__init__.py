@@ -11,8 +11,8 @@ How a user connects:
    Registration) and sends the user's browser to ``/authorize`` with PKCE.
 2. The connector opens a link request on the platform (service token) and
    sends the browser to GoMobSec's consent page, where the user signs in as
-   usual (password or SSO). GoMobSec checks the plan (Professional or
-   Enterprise) and, on approval, mints an API key for this connection only.
+   usual (password or SSO). GoMobSec checks the plan (any paid plan,
+   Individual and up) and, on approval, mints an API key for this connection only.
 3. The browser comes back to ``/oauth/callback``; the connector claims that
    key once, seals it, and redirects to Claude with an authorization code.
 4. Claude trades the code for this server's own access and refresh tokens.
