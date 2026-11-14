@@ -18,6 +18,9 @@ class FakeApi:
         self.submit_error: tuple[int, object] | None = None
         self.status_sequence: list[str] = []
         self.tier = "professional"
+        # What /api/v1/me reports. None means "an older platform that does not
+        # send this field", which is how the tier fallback gets exercised.
+        self.ai_connector: bool | None = None
         self.key = KEY
 
     def add_scan(self, status="COMPLETED", package="com.example.bank") -> str:
@@ -36,8 +39,11 @@ class FakeApi:
             return httpx.Response(401, json={"detail": "Invalid API key"})
         path, method = request.url.path, request.method
         if path == "/api/v1/me":
-            return httpx.Response(200, json={"user_id": "u", "username": "sam", "tier": self.tier,
-                                             "is_paid": self.tier != "free"})
+            body = {"user_id": "u", "username": "sam", "tier": self.tier,
+                    "is_paid": self.tier != "free"}
+            if self.ai_connector is not None:
+                body["ai_connector"] = self.ai_connector
+            return httpx.Response(200, json=body)
         if path == "/api/v1/usage":
             return httpx.Response(200, json={"total_scans": 12, "scans_this_month": 3, "scan_limit": 50})
         if path == "/api/v1/scans" and method == "GET":

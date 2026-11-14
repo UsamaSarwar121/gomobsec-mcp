@@ -42,7 +42,11 @@ logger = logging.getLogger("gomobsec_mcp.hosted")
 
 HOSTED_KEY_HELP = ("GoMobSec no longer accepts this connection — it was disconnected in GoMobSec → API keys. "
                    "Reconnect GoMobSec in your AI app's connector settings.")
-# Plans that include API access (the platform's `api_access` feature).
+# Plans that include API access (the platform's `api_access` feature). Only a
+# fallback now: GoMobSec answers "may this account use a connector?" directly
+# with `ai_connector`, and the answer is yes for every account, Free included.
+# This list is what an older platform build implies, and it is read only when
+# the newer field is absent.
 API_PLANS = frozenset({"individual", "starter", "professional", "enterprise"})
 PLAN_CACHE_SECONDS = 300
 _COOKIE_PREFIX = "gmcp_"
@@ -73,13 +77,29 @@ class HostedAccess:
         return api
 
     async def _check_plan(self, grant_id: str, api: GoMobSecClient) -> None:
-        """Only plans with API access may use the connector — checked at sign-in
-        by GoMobSec, and again here, because a plan can lapse after that."""
+        """May this account drive GoMobSec from an AI assistant?
+
+        GoMobSec answers with ``ai_connector`` on ``/api/v1/me`` — yes for every
+        account, Free included. What a plan allows is enforced per request by
+        the platform (the monthly scan quota, the scan modes a tier may run,
+        the paid report formats), so those limits arrive as clear errors on the
+        call that exceeds them rather than as a wall on the first tool call.
+
+        Still asked on every call, not only at sign-in, because the answer can
+        change under a live connection.
+
+        ``api_access`` is the fallback for an older platform build that does not
+        send ``ai_connector``. It answers a different question — may this
+        account mint a general REST key — and reading it here is what refused
+        Free accounts.
+        """
         now = time.monotonic()
         cached = self._plans.get(grant_id)
         if cached is None or cached[0] < now:
             me = await api.me()
-            allowed = me.get("api_access")
+            allowed = me.get("ai_connector")
+            if allowed is None:
+                allowed = me.get("api_access")
             if allowed is None:
                 allowed = str(me.get("tier") or "").lower() in API_PLANS
             if len(self._plans) > 10_000:
@@ -88,8 +108,8 @@ class HostedAccess:
             self._plans[grant_id] = cached
         if cached[1] is not None:
             raise GoMobSecError(
-                "GoMobSec for AI assistants is available on every paid plan (Individual and up); this account "
-                f"is on the {cached[1]} plan. Upgrade at {self._app_url}/pricing and try again.", 403)
+                "This GoMobSec account cannot use AI connectors; it is on the "
+                f"{cached[1]} plan. See {self._app_url}/pricing and try again.", 403)
 
     async def rejected(self) -> None:
         # The key was revoked in GoMobSec: end the connection so the client's

@@ -16,7 +16,7 @@ AI:  start_scan → wait_for_scan → get_findings → a prioritised fix plan
 
 GoMobSec also runs this server for you at **`https://mcp.gomobsec.ai/mcp`**. In
 Claude, go to **Settings → Connectors → Add custom connector**, enter that URL,
-and sign in with your GoMobSec account (available on every paid plan). Setup,
+and sign in with your GoMobSec account (every plan, Free included). Setup,
 tools, security and privacy are covered in [docs/HOSTED.md](docs/HOSTED.md).
 
 The rest of this page is about the **local** server, which reads apps straight

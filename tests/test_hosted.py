@@ -381,11 +381,43 @@ async def test_nothing_secret_is_stored_in_the_clear(running):
 
 
 # ── plans and revoked keys ───────────────────────────────────────────────────
-async def test_plan_without_api_access_gets_an_upgrade_message(running):
+async def test_a_free_account_may_use_the_connector(running):
+    """Connecting is not a paid feature.
+
+    The connector is how most new accounts arrive, so refusing them here turned
+    people away before they had seen a single finding. What a Free plan allows
+    is enforced by the platform per request — the monthly scan quota, the scan
+    modes a tier may run — so those limits surface on the call that exceeds
+    them, with a message that says which limit was hit.
+    """
     tokens = await _connect(running)
     running.api.tier = "free"
+    running.api.ai_connector = True
     is_error, text = await _call(running, tokens["access_token"], "list_scans")
-    assert is_error and "every paid plan" in text and "free" in text and "/pricing" in text
+    assert not is_error, text
+
+
+async def test_an_account_the_platform_refuses_is_told_so(running):
+    """The platform can still say no; the connector relays it."""
+    tokens = await _connect(running)
+    running.api.tier = "free"
+    running.api.ai_connector = False
+    is_error, text = await _call(running, tokens["access_token"], "list_scans")
+    assert is_error and "free" in text and "/pricing" in text
+
+
+async def test_an_older_platform_falls_back_to_the_paid_tier_list(running):
+    """No ``ai_connector`` in the response: assume the previous rule.
+
+    A connector release can reach production before the platform does, and the
+    fallback must not open the connector to accounts the running platform would
+    have refused.
+    """
+    tokens = await _connect(running)
+    running.api.tier = "free"
+    running.api.ai_connector = None
+    is_error, text = await _call(running, tokens["access_token"], "list_scans")
+    assert is_error and "free" in text and "/pricing" in text
 
 
 async def test_key_revoked_in_gomobsec_disconnects(running):
