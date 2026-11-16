@@ -25,7 +25,8 @@ from your disk and authenticates with an API key.
 ## Requirements
 
 - A GoMobSec account with an **API key**. Create one under **API keys** in GoMobSec.
-  API keys come with every paid plan (Individual and up).
+  API keys come with every plan, Free included. What the plan decides is the work
+  a key can ask for: scans per month, and whether `full` scan mode is available.
 - [`uv`](https://docs.astral.sh/uv/) (recommended) or Python 3.10+.
 
 ## Install
