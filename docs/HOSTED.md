@@ -11,10 +11,11 @@ without leaving the conversation. You don't need an API key or a local install.
 
 ## Who can use it
 
-**Every paid GoMobSec plan** (Individual, Starter, Professional and Enterprise)
-includes API access, and the connector is part of that. If your account is on
-the Free plan, the sign-in page offers an upgrade. A tool call made after your plan has lapsed returns an
-"upgrade" message instead of a result.
+**Every GoMobSec plan, Free included.** Connecting an AI assistant is not
+gated on a plan, and neither is an API key. What the plan decides is the work a
+tool call can ask for: how many scans a month, and whether `full` scan mode
+(static plus dynamic) is available. A call that exceeds the plan's allowance
+returns an "upgrade" message instead of a result.
 
 ## Connect
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.3 — 2026-11-16
+
+- **API keys are now open on every plan, Free included**, so the *local* server
+  works on a free account too. The note in 0.2.2 that a general REST key is "a
+  paid feature" was true when it was written and is not any more: the platform's
+  `api_access` gate now admits every tier. Nothing in this package's behaviour
+  changed — this release corrects the requirement, the connector documentation
+  and the "no API key configured" message, each of which told a free user to buy
+  a plan they do not need.
+- What a plan still decides is the work, not the door: scans per month, and
+  whether `full` scan mode (static plus dynamic) is available. Those limits
+  arrive as a clear error on the call that exceeds them.
+
 ## 0.2.2 — 2026-11-14
 
 - **The hosted connector now works on every plan, Free included.** Connecting is
